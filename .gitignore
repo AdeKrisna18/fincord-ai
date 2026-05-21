@@ -1,0 +1,13 @@
+# Folder environment
+venv/
+.env
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Database lokal & sampah
+*.db
+data/
+*.png
+.vscode/
