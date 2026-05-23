@@ -88,18 +88,15 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 # --- MAIN RUNNER ---
 if __name__ == '__main__':
-    # HTTPXRequest untuk stabilitas cloud
-    request_config = HTTPXRequest(connection_pool_size=8, read_timeout=20, write_timeout=20)
-    app = ApplicationBuilder().token(TOKEN).request(request_config).build()
-    
-    # Schedule
-    app.job_queue.run_daily(tagihan_reminder_callback, time=time(8, 0, 0))
-    
-    # Routes
-    app.add_handler(CommandHandler("start", start))
-    app.add_handler(CommandHandler("status", status))
-    app.add_handler(CommandHandler("report", report))
-    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
-    
-    print("🚀 Fincord AI is running flawlessly...")
-    app.run_polling()
+    # Jika ada variabel 'PYTHONANYWHERE_SITE', berarti kita di server
+    if 'PYTHONANYWHERE_SITE' in os.environ:
+        app.run_webhook(
+            listen="0.0.0.0",
+            port=8443,
+            url_path=TOKEN,
+            webhook_url=f"https://username_anda.pythonanywhere.com/{TOKEN}"
+        )
+    else:
+        # Jika di laptop (lokal), pakai polling biasa
+        print("🚀 Fincord AI running in Local Mode...")
+        app.run_polling()
